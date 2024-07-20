@@ -51,6 +51,13 @@ kubectl -n test apply -f k8s-dac/helloword-with-label.yaml
 kubectl -n test apply -f k8s-dac/helloword.yaml
 ```
 
+结果
+![image](./cert/demo.png)
+
+
+### test2
+
+
 ## reference
 1. [registry](https://researchlab.github.io/2019/08/24/minikube-pull-image-from-docker-registry/)
 2. [caBundle](https://cuisongliu.github.io/2020/07/kubernetes/admission-webhook/)
