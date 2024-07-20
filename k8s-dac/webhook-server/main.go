@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -25,10 +26,13 @@ var (
 	}()
 	tlsDir = os.Getenv("TLS_DIR")
 	op     = func() string {
-		if v := os.Getenv("OP"); v == "" {
-			return v
+		if v := os.Getenv("OP"); v != "" {
+			dst, _ := base64.StdEncoding.DecodeString(v)
+			log.Printf("op: %s", v)
+			log.Printf("op decode: %s", string(dst))
+			return string(dst)
 		} else {
-			return `[{"op": "add", "path": "/spec/replicas", "value": 3}]`
+			return `[{"op": "add", "path": "/spec/replicas", "value": 2}]`
 		}
 	}()
 )
