@@ -27,7 +27,7 @@ curl http://127.0.0.1:5000/v2/_catalog
 curl http://172.20.10.4:5000/v2/_catalog
 
 #minikube start(optional)
-minikube start --cpus 2 --memory 3072 --registry-mirror=https://765qw7sx.mirror.aliyuncs.com --insecure-registry=172.20.10.4:5000 --image-mirror-country=cn --image-repository=registry.cn-hangzhou.aliyuncs.com/google_containers
+minikube start --cpus 2 --memory 3072 --registry-mirror=https://765qw7sx.mirror.aliyuncs.com --insecure-registry=192.168.31.203:5000 --image-mirror-country=cn --image-repository=registry.cn-hangzhou.aliyuncs.com/google_containers
 ```
 
 ### deploy
@@ -43,8 +43,8 @@ kubectl -n devops apply -f mutating-webhook-configuration.yaml
 kubectl -n devops apply -f k8s-dac/webhook-server.yaml
 kubectl -n devops get all
 ```
-### test
-在test空间部署helloword.yaml和helloword-with-label.yaml，可以发现前一个部署失败（ 没有名为k8s-dac的label），后一个部署成功（由于dac缘故，所以replica为3）
+### test1
+在test空间部署helloword.yaml和helloword-with-label.yaml，可以发现前一个部署失败（ 没有名为k8s-dac的label），后一个部署成功（由于dac缘故，所以replica为3），main.go中35行代码
 ```sh
 #apply pod
 kubectl -n test apply -f k8s-dac/helloword-with-label.yaml
@@ -56,12 +56,22 @@ kubectl -n test apply -f k8s-dac/helloword.yaml
 
 
 ### test2
+在webhook-server中添加环境变量OP（值如下）
+```sh
+base64(`[{"op":"add","path":"/spec/template/spec/containers/1","value":{"name":"curl-container","image":"curlimages/curl:latest","imagePullPolicy":"IfNotPresent","restartPolicy":"Always","command":["sleep","infinity"]}}]`)
+=>
+W3sib3AiOiJhZGQiLCJwYXRoIjoiL3NwZWMvdGVtcGxhdGUvc3BlYy9jb250YWluZXJzLzEiLCJ2YWx1ZSI6eyJuYW1lIjoiY3VybC1jb250YWluZXIiLCJpbWFnZSI6ImN1cmxpbWFnZXMvY3VybDpsYXRlc3QiLCJpbWFnZVB1bGxQb2xpY3kiOiJJZk5vdFByZXNlbnQiLCJyZXN0YXJ0UG9saWN5IjoiQWx3YXlzIiwiY29tbWFuZCI6WyJzbGVlcCIsImluZmluaXR5Il19fV0=
+```
+重新部署在test空间部署helloword.yaml和helloword-with-label.yaml，可以发现前一个部署失败（ 没有名为k8s-dac的label），后一个部署成功（由于dac缘故，所以container为2），OP变量新增了一个container
 
+结果
+![image](./cert/demo2.png)
 
 ## reference
 1. [registry](https://researchlab.github.io/2019/08/24/minikube-pull-image-from-docker-registry/)
 2. [caBundle](https://cuisongliu.github.io/2020/07/kubernetes/admission-webhook/)
 3. [jianshu](https://www.jianshu.com/p/00c69b992e3f)
+4. [how to get jsonpatch](https://json-patch-builder-online.github.io/)
 
 ## how
 

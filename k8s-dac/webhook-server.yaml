@@ -24,8 +24,6 @@ spec:
               value: /run/secrets/tls
             - name: SKIP_NAMESPACE
               value: devops
-            - name: OP
-              value: W3sib3AiOiJhZGQiLCJwYXRoIjoiL3NwZWMiLCJ2YWx1ZSI6eyJ0ZW1wbGF0ZSI6eyJzcGVjIjp7ImluaXRDb250YWluZXJzIjpbeyJuYW1lIjoiY3VybC1jb250YWluZXIiLCJpbWFnZSI6ImN1cmxpbWFnZXMvY3VybDpsYXRlc3QiLCJpbWFnZVB1bGxQb2xpY3kiOiJJZk5vdFByZXNlbnQiLCJyZXN0YXJ0UG9saWN5IjoiQWx3YXlzIiwiY29tbWFuZCI6WyJzbGVwcCIsImluZmluaXR5Il19XX19fX1d
           ports:
             - containerPort: 8080
               name: http
