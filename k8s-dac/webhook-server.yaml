@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webhook-server
+  labels:
+    app: webhook-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webhook-server
+  template:
+    metadata:
+      labels:
+        app: webhook-server
+    spec:
+      containers:
+        - name: webhook-server
+          # local setup for testing
+          image: webhook-server:v0.0.1
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: TLS_DIR
+              value: /run/secrets/tls
+            - name: SKIP_NAMESPACE
+              value: devops
+          ports:
+            - containerPort: 8080
+              name: http
+          volumeMounts:
+            - name: webhook-tls-certs
+              mountPath: /run/secrets/tls
+              readOnly: true
+      volumes:
+        - name: webhook-tls-certs
+          secret:
+            secretName: webhook-server-tls
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: webhook-server-svc
+  namespace: devops
+spec:
+  selector:
+    app: webhook-server
+  ports:
+    - port: 8080
+      targetPort: 8080
